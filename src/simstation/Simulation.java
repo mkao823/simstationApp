@@ -110,9 +110,9 @@ public class Simulation extends Model {
 
         // pick a random neighbor in range of the radius, otherwise pick one randomly in the agents
         if (aroundNeighbor.size() != 0) { 
-            neighbor = aroundNeighbor.get((int) (Math.random() * (aroundNeighbor.size() - 1)));
+            neighbor = aroundNeighbor.get((int) (Math.random() * aroundNeighbor.size()));
         } else {    
-            neighbor = agents.get((int) (Math.random() * (agents.size() - 1)));
+            neighbor = agents.get((int) (Math.random() * agents.size()));
         }
         return neighbor;
     }

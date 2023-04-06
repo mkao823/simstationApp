@@ -8,12 +8,11 @@ public abstract class Agent implements Runnable, Serializable {
     protected String name;
     private int xc;
     private int yc;
-    private boolean suspend;
+    private boolean suspended;
     protected Heading heading;
     protected boolean stopped;
     protected Thread myThread;
     protected Simulation world;
-
 
     public Agent(String name, int xc, int yc, Heading heading, Simulation world) {
         this.name = name;
@@ -22,39 +21,46 @@ public abstract class Agent implements Runnable, Serializable {
         this.heading = heading;
         this.world = world;
     }
+
     
-    public void run() {
-        while (!this.stopped) {
-            try{
-                if(this.suspend){
-                    Thread.sleep(20);
-                    continue;
-                }
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                System.out.println(e);
+    private synchronized void checkSuspended() throws InterruptedException {
+            while (!stopped && suspended) {
+                wait();
+                suspended = false;
             }
-            update();
+    }
+
+    public void run() {
+        myThread = Thread.currentThread();
+        while (!isStopped()) {
+            try {
+                update();
+                Thread.sleep(10);
+                checkSuspended();
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
     
-    public void start() {
+    
+    public synchronized void start() {
         this.myThread = new Thread(this);
         this.myThread.start();
     }
-    
-    public void suspend() {
-        this.suspend = true;
+
+    public synchronized void suspend() {
+        this.suspended = true;
     }
-    
-    public void resume() {
-        this.suspend = false;
+
+    public synchronized void resume() {
+        this.suspended = false;
     }
-    
-    public void stop() {
+
+    public synchronized void stop() {
         this.stopped = true;
     }
-    
+
     public abstract void update();
 
     // ensure race condition wont happen
@@ -62,9 +68,9 @@ public abstract class Agent implements Runnable, Serializable {
 
         switch (this.heading) {
             case NORTH:
-                this.xc -= steps; 
-                if (this.xc < 0) 
-                    this.xc += 250; 
+                this.xc -= steps;
+                if (this.xc < 0)
+                    this.xc += 250;
                 break;
 
             case SOUTH:
@@ -88,6 +94,21 @@ public abstract class Agent implements Runnable, Serializable {
         world.changed();
     }
 
+    public boolean isSuspended() {
+        return this.suspended;
+    }
+
+    public boolean isStopped() {
+        return this.stopped;
+    }
+
+    public synchronized void join() throws InterruptedException {
+
+        if (myThread != null)
+            myThread.join();
+
+    }
+
     public int getYc() {
         return this.yc;
     }
@@ -107,4 +128,5 @@ public abstract class Agent implements Runnable, Serializable {
     public String getName() {
         return this.name;
     }
+
 }
