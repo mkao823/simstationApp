@@ -85,6 +85,8 @@ public class Simulation extends Model {
                 agent.stop();
             }
         }
+
+        // create new set of agent, remove all old agents
         agents = new LinkedList<Agent>();
         changed();
 
@@ -92,11 +94,27 @@ public class Simulation extends Model {
 
     public void stats() {
         Utilities.inform("#agents = " + agents.size()+ "\nclock = " + getClock());
-
     }
 
     public Agent getNeighbor(Agent a, double radius) {
-        return a;
+        Agent neighbor;
+        ArrayList<Agent> aroundNeighbor = new ArrayList<Agent>();
+        for (Agent b : agents) {
+            if (b != a) {
+                double dist = Math.sqrt(Math.pow(a.getXc() - b.getXc(), 2) + Math.pow(a.getYc() - b.getYc(), 2));
+                if (dist < radius) {
+                    aroundNeighbor.add(b);
+                }
+            }
+        }
+
+        // pick a random neighbor in range of the radius, otherwise pick one randomly in the agents
+        if (aroundNeighbor.size() != 0) { 
+            neighbor = aroundNeighbor.get((int) (Math.random() * (aroundNeighbor.size() - 1)));
+        } else {    
+            neighbor = agents.get((int) (Math.random() * (agents.size() - 1)));
+        }
+        return neighbor;
     }
 
     public void populate() {}
