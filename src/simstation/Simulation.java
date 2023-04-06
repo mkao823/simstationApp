@@ -45,7 +45,6 @@ public class Simulation extends Model {
     public synchronized void start() {
         
         clock = 0;
-
         // stop all agents
         if (this.agents.size() != 0) {
             for (Agent agent : agents) {
@@ -60,21 +59,39 @@ public class Simulation extends Model {
     }
     
     public synchronized void suspend() {
-        
-        // empty
+        if (timer != null) {
+            stopTimer();
+        }
+        for (Agent agent : this.agents) {
+            agent.suspend();
+        }
     }
     public synchronized void resume() {
         
-        // empty
+        if (timer != null) {
+            startTimer();
+            for (Agent agent : agents) {
+                agent.resume();
+            }
+        }
     }
 
     public synchronized void stop() {
-        // empty
+        
+        if (timer != null) {
+            stopTimer();
+
+            for (Agent agent : agents) {
+                agent.stop();
+            }
+        }
+        agents = new LinkedList<Agent>();
+        changed();
 
     }
 
     public void stats() {
-        // empty
+        Utilities.inform("#agents = " + agents.size()+ "\nclock = " + getClock());
 
     }
 

@@ -88,4 +88,23 @@ public abstract class Agent implements Runnable, Serializable {
         world.changed();
     }
 
+    public int getYc() {
+        return this.yc;
+    }
+
+    public int getXc() {
+        return this.xc;
+    }
+
+    public Heading getHeading() {
+        return this.heading;
+    }
+
+    public void setHeading(Heading heading) {
+        this.heading = heading;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }
