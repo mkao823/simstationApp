@@ -9,6 +9,8 @@ public class Simulation extends Model {
     private int clock;
     protected List<Agent> agents;
 
+    public static Integer AGENT_SIZE = 5;
+
     public Simulation() {
         clock = 0;
         agents = new LinkedList<Agent>();
