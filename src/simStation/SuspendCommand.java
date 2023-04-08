@@ -1,21 +1,18 @@
-package simstation;
+package simStation;
 
 import mvc.Command;
 import mvc.Model;
 
-public class ResumeCommand extends Command {
-    
-    
-    public ResumeCommand(Model model) {
+public class SuspendCommand extends Command {
+    public SuspendCommand(Model model) {
         super(model);
-        
     }
 
     @Override
     public void execute() throws Exception {
         Simulation sim = (Simulation) model;
-        sim.resume();
-        
+        sim.suspend();
     }
-}
 
+
+}

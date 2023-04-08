@@ -1,19 +1,18 @@
-package simstation;
+package simStation;
 
 import mvc.Command;
 import mvc.Model;
 
-public class StopCommand extends Command {
-
-    public StopCommand(Model model) {
+public class StartCommand extends Command {
+    public StartCommand(Model model) {
         super(model);
-
     }
 
     @Override
     public void execute() throws Exception {
         Simulation sim = (Simulation) model;
-        sim.stop();
+        sim.start();
     }
+
 
 }

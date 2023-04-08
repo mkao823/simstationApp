@@ -1,15 +1,15 @@
-package simstation;
+package simStation;
 
-import mvc.*;
+import mvc.AppFactory;
+import mvc.AppPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SimulationPanel extends AppPanel {
 
+public class SimulationPanel extends AppPanel {
     public SimulationPanel(AppFactory factory) {
         super(factory);
-
         controlPanel.setLayout(new GridLayout(0, 1));
 
         controlPanel.setBackground(Color.LIGHT_GRAY);
