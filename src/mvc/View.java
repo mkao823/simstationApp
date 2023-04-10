@@ -1,32 +1,29 @@
 package mvc;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
 public class View extends JPanel implements PropertyChangeListener {
-
+	
     protected Model model;
-
-    public View(Model model) {
-        super();
-        this.model = model;
-        //model.addPropertyChangeListener(this);
-        // optional border around the view component
-        setBorder(LineBorder.createGrayLineBorder());//.createBlackLineBorder());
+    
+    public View(Object model) {
+        this.model = (Model)model;
+        this.model.addPropertyChangeListener(this);
     }
-
-    public Model getModel() {return model; }
-
-    // called by File/Open and File/New
-    public void setModel(Model newModel) {
-        this.model = newModel;
-        if (newModel != null) {
-            this.model.addPropertyChangeListener(this);
-        }
-    }
+    
     @Override
-    public void propertyChange(PropertyChangeEvent arg0) { this.repaint(); }
-
+    public void propertyChange(PropertyChangeEvent evt) {
+        repaint();
+    }
+    // discard this view  with the old model or reuse it?
+    
+	public void setModel(Model model) {
+        this.model.removePropertyChangeListener(this);
+        this.model = model;
+        this.model.initSupport();
+        this.model.addPropertyChangeListener(this);
+        repaint();
+	}
 }

@@ -4,64 +4,49 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
-public class AppPanel extends JPanel implements PropertyChangeListener, ActionListener  {
+import java.io.ObjectOutputStream;
 
-    protected Model model;
-    protected AppFactory factory;
-    protected View view;
-    protected JPanel controlPanel;
-    private JFrame frame;
+public class AppPanel extends JPanel implements ActionListener, KeyListener {
+
+	protected Model model;
+	protected View view;
+	protected JPanel controlPanel;
+	protected AppFactory factory;
+	protected JFrame frame;
+
     public static int FRAME_WIDTH = 500;
     public static int FRAME_HEIGHT = 300;
 
-    public AppPanel(AppFactory factory) {
-        super();
-        this.factory = factory;
-        model = factory.makeModel();
-        view = factory.makeView(model);
-        view.setBackground((Color.GRAY));
+	public AppPanel(AppFactory factory) {
+		this.factory = factory;
+		model = factory.makeModel();
+		controlPanel = new JPanel();
+		view = factory.makeView(model);
 
-        controlPanel = new JPanel();
-        controlPanel.setBackground((Color.PINK));
-        setLayout(new GridLayout(1, 2));
+        setLayout((new GridLayout(1, 2)));
         add(controlPanel);
         add(view);
 
-        if (model != null) {
-            model.addPropertyChangeListener(this);
-            model.addPropertyChangeListener(view);
-        }
+        controlPanel.setBackground(Color.PINK);
+        view.setBackground(Color.GRAY);
 
-        frame = new SafeFrame();
+        frame = new JFrame();
         Container cp = frame.getContentPane();
         cp.add(this);
         frame.setJMenuBar(createMenuBar());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle(factory.getTitle());
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-    }
 
-    public void display() { frame.setVisible(true); }
-
-    public void propertyChange(PropertyChangeEvent evt) {
-        /* override in extensions if needed */
-    }
-
-    public Model getModel() { return model; }
-
-    // called by file/open and file/new
-    public void setModel(Model newModel) {
-        this.model.removePropertyChangeListener(this);
-        this.model = newModel;
-        this.model.initSupport();
-        this.model.addPropertyChangeListener(this);
-        view.setModel(this.model);
-        model.changed();
-        //alternatively: this.model.copy(model);
-    }
+        this.addKeyListener(this);
+        this.setFocusable(true);
+	}
 
     protected JMenuBar createMenuBar() {
         JMenuBar result = new JMenuBar();
@@ -82,38 +67,61 @@ public class AppPanel extends JPanel implements PropertyChangeListener, ActionLi
     }
 
     public void actionPerformed(ActionEvent ae) {
-        try {
-            String cmmd = ae.getActionCommand();
-
-            if (cmmd == "Save") {
-                Utilities.save(model, false);
-            } else if (cmmd == "SaveAs") {
-                Utilities.save(model, true);
-            } else if (cmmd == "Open") {
-                Model newModel = Utilities.open(model);
-                if (newModel != null) setModel(newModel);
-            } else if (cmmd == "New") {
+    	try {
+        String cmmd = ae.getActionCommand();
+        if (cmmd == "Save") {
+                String fName = Utilities.getFileName(null, false);
+                ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fName));
+                os.writeObject(model);
+                os.close();
+        } else if (cmmd == "SaveAs") {
+            Utilities.save(model, true);
+        } else if (cmmd == "Open") {
                 Utilities.saveChanges(model);
-                setModel(factory.makeModel());
-                // needed cuz setModel sets to true:
-                model.setUnsavedChanges(false);
-            } else if (cmmd == "Quit") {
-                Utilities.saveChanges(model);
-                System.exit(1);
-            } else if (cmmd == "About") {
-                Utilities.inform(factory.about());
-            } else if (cmmd == "Help") {
-                Utilities.inform(factory.getHelp());
-            } else { // must be from Edit menu
-                Command command = factory.makeEditCommand(model, cmmd, ae.getSource());
-                command.execute();
-            }
-        } catch (Exception e) {
-            handleException(e);
+                String fName = Utilities.getFileName(null, true);
+                ObjectInputStream is = new ObjectInputStream(new FileInputStream(fName));
+                //model.removePropertyChangeListener(this);
+                model = (Model)is.readObject();
+                //this.model.initSupport();
+                //model.addPropertyChangeListener(this);
+                view.setModel(model);
+                is.close();
+        } else if (cmmd == "New") {
+            Utilities.saveChanges(model);
+            model = factory.makeModel();
+            view.setModel(model);
+        } else if (cmmd == "Quit") {
+            Utilities.saveChanges(model);
+            System.exit(1);
+        } else if (cmmd == "About") {
+            Utilities.inform(factory.about());
+        } else if (cmmd == "Help") {
+            Utilities.inform(factory.getHelp());
+        } else {
+        	Command command = factory.makeEditCommand(model, cmmd,this);
+        	command.execute();
         }
+
+    	} catch (Exception e) {
+    	     handleException(e);
+    	  }
     }
 
     protected void handleException(Exception e) {
-        Utilities.error(e);
-    }
+    	  Utilities.error(e);
+    	}
+
+	public void display() {
+		frame.setVisible(true);
+	}
+
+	public void propertyChange(PropertyChangeEvent evt) {
+
+	}
+
+	public void keyPressed(KeyEvent event) {}
+
+    public void keyReleased(KeyEvent e) {}
+
+    public void keyTyped(KeyEvent e) {}
 }

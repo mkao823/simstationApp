@@ -1,9 +1,9 @@
 package mvc;
 
-import java.awt.event.*;
+import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Random;
-import javax.swing.*;
 
 public class Utilities {
 
@@ -11,7 +11,7 @@ public class Utilities {
     public static boolean confirm(String query) {
         int result = JOptionPane.showConfirmDialog(null,
                 query, "choose one", JOptionPane.YES_NO_OPTION);
-        return result == 0;
+        return result == 1;
     }
 
     // asks user for info
