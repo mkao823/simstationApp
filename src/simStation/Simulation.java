@@ -88,25 +88,24 @@ public class Simulation extends Model {
         Utilities.inform("#agents = " + getAgents().size() + "\nclock = " + getClock());
     }
 
-    public Agent getNeighbor(Agent a1, int range) {
+    public synchronized Agent getNeighbor(Agent a, int range) {
+        Agent neighbor;
         ArrayList<Agent> inRange = new ArrayList<Agent>();
-        for (int i = 0; i < agents.size(); i++) {
-            Agent a2 = agents.get(i);
-            double newDist = Math.sqrt(Math.pow(a1.getXc() - a2.getXc(), 2) + Math.pow(a1.getYc() - a2.getYc(), 2));
-            if (newDist < range) {
-                inRange.add(a2);
+        for (Agent b: agents) {
+            double newDist = Math.sqrt(
+                    Math.pow(a.getXc() - b.getXc(), 2) + Math.pow(a.getYc() - b.getYc(), 2));
+            if (newDist < range && b != a) {
+                inRange.add(b);
             }
         }
-        if (inRange.isEmpty()) {
-            return agents.get((int) (Math.random() * agents.size()));
-        } else {
-            int index = (int) (Math.random() * inRange.size());
-            while (inRange.get(index) == a1) {
-                index = (int) (Math.random() * inRange.size());
-            }
-            return inRange.get(index);
-        }
+        if (!inRange.isEmpty())
+            neighbor = inRange.get((int)(Math.random() * (inRange.size())));
+        else
+            neighbor = null;
+
+        return neighbor;
     }
+
 
     public List<Agent> getAgents() {
         return agents;
