@@ -13,8 +13,6 @@ public class FlockingSimulation extends Simulation{
     public void populate() {
         for(int i = 0; i < 30; i++) {
             Bird bird = new Bird();
-            //Agent neighbor = getNeighbor(bird, 10);
-            //getStats(neighbor);
             this.addAgent(bird);
         }
     }
