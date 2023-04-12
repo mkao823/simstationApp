@@ -33,7 +33,7 @@ public class SimulationView extends View {
         for (Agent a : agents) {
 
 
-            gc.setColor(Color.RED);
+            gc.setColor(Color.WHITE);
             gc.fillOval(a.getXc(), a.getYc(), sim.AGENT_SIZE, sim.AGENT_SIZE);
         }
     }

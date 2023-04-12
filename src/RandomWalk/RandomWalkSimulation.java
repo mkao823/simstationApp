@@ -11,8 +11,6 @@ public class RandomWalkSimulation extends Simulation {
             this.addAgent(new Drunk());
     }
 
-
-
     public static void main(String[] args) {
         AppPanel panel = new SimulationPanel(new RandomWalkFactory());
         panel.display();
