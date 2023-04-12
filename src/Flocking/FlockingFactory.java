@@ -5,5 +5,5 @@ import simStation.SimStationFactory;
 
 public class FlockingFactory extends SimStationFactory {
     public Model makeModel() { return new FlockingSimulation(); }
-    public String getTitle() { return "Random Walks";}
+    public String getTitle() { return "Flocking";}
 }

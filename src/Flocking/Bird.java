@@ -8,23 +8,26 @@ public class Bird extends Agent{
     public Bird() {
         super();
         heading = Heading.random();
-        speed = Utilities.rng.nextInt(10) + 1;
+        speed = Utilities.rng.nextInt(5) + 1;
     }
 
     public void update() {
-        //heading = Heading.random();
+        heading = Heading.random();
         Agent neighbor = world.getNeighbor(this, 10);
         Bird birdNeighbor = (Bird)neighbor;
-        this.speed = birdNeighbor.getSpeed();
-        this.heading = birdNeighbor.getHeading();
-        //int steps = Utilities.rng.nextInt(10) + 1;
+        if(birdNeighbor != null){
+            this.setSpeed(birdNeighbor.getSpeed());
+            this.setHeading(birdNeighbor.getHeading());
+        }
         int steps = speed;
         move(steps);
     }
     public int getSpeed(){
         return this.speed;
     }
+    public void setSpeed(int speed) {this.speed = speed;}
     public Heading getHeading(){
         return this.heading;
     }
+    public void setHeading(Heading heading){this.heading = heading;}
 }
