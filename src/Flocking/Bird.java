@@ -12,7 +12,7 @@ public class Bird extends Agent{
     }
 
     public void update() {
-        heading = Heading.random();
+        //heading = Heading.random();
         Agent neighbor = world.getNeighbor(this, 10);
         Bird birdNeighbor = (Bird)neighbor;
         if(birdNeighbor != null){
