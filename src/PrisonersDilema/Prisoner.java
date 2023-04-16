@@ -41,32 +41,31 @@ public class Prisoner extends Agent{
 	
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
 		Agent n = world.getNeighbor(this, 10);
 		Prisoner p = (Prisoner)n;
 		// both cooperate
 		if (p != null) {
 			if (p.cooperate() && this.cooperate()) {
-				setFit(3);
+				this.setFit(3);
 				partnerCheated = false;
-				//p.setFit(3);
+				p.setFit(3);
 			// you cheat
 			} else if (p.cooperate() && !this.cooperate()) {
 				setFit(5);
 				partnerCheated = false;
-				//p.setFit(0);
+				p.setFit(0);
 			}
 			// both cheat
 			else if (!p.cooperate() && !this.cooperate()) {
 				setFit(1);
 				partnerCheated = true;
-				//p.setFit(0);
+				p.setFit(1);
 			}
 			// partner cheats
 			else {
 				setFit(0);
 				partnerCheated = true;
-				//p.setFit(5);
+				p.setFit(5);
 			}
 		}
 		
@@ -80,7 +79,7 @@ public class Prisoner extends Agent{
 	}
 	
 	public void setFit(int f) {
-		fit = f;
+		fit += f;
 	}
 	
 	public Strategy getStrategy() {
